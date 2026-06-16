@@ -1,9 +1,9 @@
-const CACHE = 'unlockbox-v2';
+const CACHE = 'unlockbox-v3';
 const ASSETS = [
   './',
   './index.html',
-  './css/styles.css?v=2',
-  './js/app.js?v=2',
+  './css/styles.css?v=3',
+  './js/app.js?v=3',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',

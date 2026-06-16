@@ -32,7 +32,7 @@
   --grad-primary: linear-gradient(135deg, #c93c33 0%, #7a221d 100%);
   --grad-dark: linear-gradient(135deg, #1a1a1f 0%, #0a0a0b 100%);
   /* Microsoft / professional trading platforms typography */
-  --font-display: "Segoe UI", "Segoe UI Variable", SegoeUI, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, Arial, "Arial Nova", "Liberation Sans", sans-serif;
   --font-body: "Segoe UI", "Segoe UI Variable", SegoeUI, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
