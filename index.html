@@ -4,242 +4,262 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0a0a" />
-<title>UnlockBox · Alquiler de Cajas Decodificadoras y Servicios Unlock</title>
-<meta name="description" content="Alquila cajas decodificadoras de cualquier tipo y accede a servicios Unlock profesionales. Soporte por WhatsApp, Telegram y más." />
-<link rel="manifest" href="manifest.webmanifest" />
+<meta name="description" content="Alquiler de cajas de unlock y descodificadores. Servicios profesionales de desbloqueo móvil." />
+<title>UNLOCK BOX - Alquiler de Cajas de Desbloqueo</title>
+<link rel="manifest" href="manifest.json" />
 <link rel="icon" type="image/png" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
-<!-- UTILITY TOP BAR -->
-<div class="utilbar">
-  <div class="container utilbar-inner">
-    <div class="util-left">
-      <a id="topPhone" href="#"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.2 0-2.5-.2-3.6-.6-.3-.1-.7 0-1 .2l-2.2 2.2a15 15 0 0 1-6.6-6.6l2.2-2.2c.3-.3.4-.7.2-1A11.4 11.4 0 0 1 8.5 4c0-.6-.4-1-1-1H4c-.6 0-1 .4-1 1 0 9.4 7.6 17 17 17 .6 0 1-.4 1-1v-3.5c0-.6-.4-1-1-1z"/></svg><span></span></a>
-      <a id="topEmail" href="#"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg><span></span></a>
-    </div>
-    <div class="util-right">
-      <select id="currencySel"><option>USD</option><option>EUR</option><option>CUP</option><option>MXN</option></select>
-      <select id="langSel"><option value="es">🇪🇸 ES</option><option value="en">🇬🇧 EN</option></select>
-    </div>
+<!-- Top bar -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <span><i class="fa-solid fa-phone"></i> +53 0000 0000</span>
+    <span><i class="fa-solid fa-envelope"></i> contacto@unlockbox.com</span>
+    <span><i class="fa-solid fa-clock"></i> Lun - Sáb · 8AM - 5PM</span>
   </div>
 </div>
 
-<!-- HEADER -->
-<header class="topbar">
-  <div class="container topbar-inner">
-    <a href="#" class="brand" data-view="home">
-      <span class="brand-mark">U</span>
-      <span class="brand-name">UNLOCK<span class="brand-accent">BOX</span></span>
+<!-- Header / Nav -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="#" class="brand">
+      <i class="fa-solid fa-unlock-keyhole"></i>
+      <span>UNLOCK<strong>BOX</strong></span>
     </a>
-    <nav class="nav">
-      <button class="nav-btn active" data-view="home">Inicio</button>
-      <button class="nav-btn" data-view="catalog">Catálogo</button>
-      <button class="nav-btn" data-view="pricing">Precios Revendedor</button>
-      <button class="nav-btn" data-view="clients">Registro</button>
-      <button class="nav-btn nav-login" data-view="admin"><svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V11a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0v3H9V6z"/></svg> Login</button>
+    <nav class="nav" id="nav">
+      <a href="#inicio">Inicio</a>
+      <a href="#cajas">Cajas</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#registro" class="btn-pill">Registrarse</a>
+      <a href="#" id="adminBtn" class="btn-admin"><i class="fa-solid fa-user-shield"></i> Admin</a>
     </nav>
+    <button class="burger" id="burger" aria-label="Menú"><i class="fa-solid fa-bars"></i></button>
   </div>
 </header>
 
-<main class="main">
-
-  <!-- HOME / HERO SLIDER -->
-  <section class="view view-home active" id="home">
-    <div class="slider" id="slider">
-      <div class="slides" id="slides"></div>
-      <button class="sl-arrow sl-prev" id="slPrev" aria-label="Anterior">‹</button>
-      <button class="sl-arrow sl-next" id="slNext" aria-label="Siguiente">›</button>
-      <div class="sl-dots" id="slDots"></div>
+<!-- Hero -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+  <div class="container hero-content">
+    <span class="tag">Servicios profesionales de desbloqueo</span>
+    <h1>Alquila tu <span class="accent">caja de UNLOCK</span><br/>al instante</h1>
+    <p class="lead">Renta de cajas y descodificadores de todo tipo. iCloud Bypass, FRP, IMEI, MDM, Servidores y mucho más. Soporte directo por WhatsApp, Telegram y Facebook.</p>
+    <div class="hero-cta">
+      <a href="#cajas" class="btn btn-primary"><i class="fa-solid fa-box-open"></i> Ver Cajas</a>
+      <a href="#registro" class="btn btn-ghost"><i class="fa-solid fa-user-plus"></i> Registrarme</a>
     </div>
-
-    <div class="container">
-      <!-- PAYMENT METHODS -->
-      <section class="card-panel">
-        <div class="pay-icon">
-          <svg viewBox="0 0 64 64"><rect x="6" y="14" width="52" height="36" rx="5" fill="#4a8fe7"/><rect x="6" y="20" width="52" height="6" fill="#1a1a1a"/><circle cx="46" cy="40" r="8" fill="#ffd54f" stroke="#1a1a1a" stroke-width="2"/></svg>
-        </div>
-        <h2 class="panel-title">Aceptamos varios métodos de pago:</h2>
-        <p class="panel-sub" id="payMethods">CUP, MCL, Zelle, Peso Mexicano, USDT.</p>
-      </section>
-
-      <!-- CONTACT -->
-      <section class="card-panel">
-        <h2 class="panel-title">Contáctenos</h2>
-        <div class="contact-icons" id="contactIcons"></div>
-        <p class="hours-label">Horario de Soporte:</p>
-        <p class="hours" id="hoursLine1">Lunes a Sábado</p>
-        <p class="hours" id="hoursLine2">8 AM a 5 PM.</p>
-      </section>
+    <div class="hero-stats">
+      <div><strong id="statBoxes">0</strong><span>Cajas disponibles</span></div>
+      <div><strong id="statClients">0</strong><span>Clientes</span></div>
+      <div><strong>24/7</strong><span>Soporte</span></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- CATALOG -->
-  <section id="catalog" class="view view-catalog">
-    <div class="container">
-      <div class="section-head">
-        <h2>Cajas y servicios disponibles</h2>
-        <input type="search" id="searchBox" placeholder="Buscar..." class="search" />
-      </div>
-      <div class="grid" id="boxGrid"></div>
+<!-- Services -->
+<section class="section" id="servicios">
+  <div class="container">
+    <div class="section-head">
+      <h2>Nuestros <span class="accent">Servicios</span></h2>
+      <p>Todo lo que necesitas para tu negocio de desbloqueo.</p>
     </div>
-  </section>
-
-  <!-- PRICING -->
-  <section id="pricing" class="view view-pricing">
-    <div class="container">
-      <div class="section-head"><h2>Precios para Revendedores</h2></div>
-      <div class="card form" style="padding:24px">
-        <p>Contáctanos para conocer nuestros planes de revendedor con descuentos especiales por volumen.</p>
-        <p>Escríbenos por WhatsApp o Telegram para recibir la lista de precios completa.</p>
-      </div>
+    <div class="grid-4">
+      <div class="feature"><i class="fa-solid fa-mobile-screen"></i><h3>Unlock IMEI</h3><p>Liberación oficial de cualquier operadora.</p></div>
+      <div class="feature"><i class="fa-brands fa-apple"></i><h3>iCloud Bypass</h3><p>Soluciones para iPhone XR hasta 15 Pro Max.</p></div>
+      <div class="feature"><i class="fa-brands fa-android"></i><h3>FRP / MDM</h3><p>Bypass de cuenta Google y MDM empresarial.</p></div>
+      <div class="feature"><i class="fa-solid fa-server"></i><h3>Servidores</h3><p>Créditos y servidores para todas las herramientas.</p></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- CLIENTS -->
-  <section id="clients" class="view view-clients">
-    <div class="container">
-      <div class="section-head">
-        <h2>Registro de clientes</h2>
-        <button class="btn btn-ghost" id="exportClients">Exportar CSV</button>
-      </div>
-      <form id="registerForm" class="card form" autocomplete="on">
-        <h3>Solicitar alquiler / servicio</h3>
-        <div class="form-grid">
-          <label>Nombre completo<input required name="name" type="text" /></label>
-          <label>Teléfono / WhatsApp<input required name="phone" type="tel" /></label>
-          <label>Correo<input name="email" type="email" /></label>
-          <label>Dirección<input name="address" type="text" /></label>
-          <label>Caja / Servicio de interés
-            <select name="box" id="boxSelect"></select>
-          </label>
-          <label>Estado
-            <select name="status">
-              <option value="solicitado">Solicitado</option>
-              <option value="alquilado">Alquilado</option>
-              <option value="devuelto">Devuelto</option>
-            </select>
-          </label>
-          <label class="full">Notas<textarea name="notes" rows="3"></textarea></label>
-        </div>
-        <button class="btn btn-primary" type="submit">Guardar cliente</button>
-      </form>
-      <div class="table-wrap">
-        <table class="clients-table" id="clientsTable">
-          <thead><tr><th>Nombre</th><th>Teléfono</th><th>Caja</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+<!-- Boxes catalog -->
+<section class="section dark" id="cajas">
+  <div class="container">
+    <div class="section-head">
+      <h2>Cajas de <span class="accent">Desbloqueo</span> Disponibles</h2>
+      <p>Alquila la caja que necesitas. Soporte y configuración incluidos.</p>
     </div>
-  </section>
-
-  <!-- ADMIN -->
-  <section id="admin" class="view view-admin">
-    <div class="container">
-      <div class="section-head"><h2>Panel de administración</h2></div>
-
-      <div class="admin-tabs">
-        <button class="tab-btn active" data-tab="t-boxes">Cajas / Servicios</button>
-        <button class="tab-btn" data-tab="t-slides">Banners Portada</button>
-        <button class="tab-btn" data-tab="t-site">Sitio (Contacto, Pagos, Horario)</button>
-      </div>
-
-      <!-- BOXES TAB -->
-      <div class="tab-pane active" id="t-boxes">
-        <form id="boxForm" class="card form">
-          <h3>Agregar / editar caja o servicio</h3>
-          <input type="hidden" name="id" />
-          <div class="form-grid">
-            <label>Nombre<input required name="name" /></label>
-            <label>Precio (alquiler)<input required name="price" /></label>
-            <label class="full">Descripción corta<input name="short" /></label>
-            <label class="full">Información detallada<textarea name="info" rows="4"></textarea></label>
-            <label>Imagen (URL o subir)
-              <input name="image" placeholder="https://..." />
-            </label>
-            <label>Subir imagen
-              <input type="file" id="imageFile" accept="image/*" />
-            </label>
-            <label>WhatsApp (link)<input name="whatsapp" placeholder="https://wa.me/..." /></label>
-            <label>Facebook<input name="facebook" placeholder="https://facebook.com/..." /></label>
-            <label>Telegram<input name="telegram" placeholder="https://t.me/..." /></label>
-            <label class="full">Links de descarga (Nombre|URL, separados por coma)
-              <textarea name="downloads" rows="3" placeholder="Firmware v1|https://...,Manual|https://..."></textarea>
-            </label>
-          </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" type="submit">Guardar caja</button>
-            <button class="btn btn-ghost" type="reset">Limpiar</button>
-          </div>
-        </form>
-        <div class="grid" id="adminGrid"></div>
-      </div>
-
-      <!-- SLIDES TAB -->
-      <div class="tab-pane" id="t-slides">
-        <form id="slideForm" class="card form">
-          <h3>Agregar / editar banner</h3>
-          <input type="hidden" name="id" />
-          <div class="form-grid">
-            <label class="full">Título (opcional)<input name="title" /></label>
-            <label>Imagen URL<input name="image" placeholder="https://..." /></label>
-            <label>Subir imagen<input type="file" id="slideFile" accept="image/*" /></label>
-            <label class="full">Enlace al hacer click (opcional)<input name="link" placeholder="https://..." /></label>
-          </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" type="submit">Guardar banner</button>
-            <button class="btn btn-ghost" type="reset">Limpiar</button>
-          </div>
-        </form>
-        <div class="grid" id="slidesGrid"></div>
-      </div>
-
-      <!-- SITE CONFIG TAB -->
-      <div class="tab-pane" id="t-site">
-        <form id="siteForm" class="card form">
-          <h3>Configuración del sitio</h3>
-          <div class="form-grid">
-            <label>Teléfono<input name="phone" placeholder="+53 5497 5132" /></label>
-            <label>Correo<input name="email" placeholder="contacto@..." /></label>
-            <label class="full">Métodos de pago<input name="payments" placeholder="CUP, MCL, Zelle, USDT..." /></label>
-            <label>Horario línea 1<input name="hours1" placeholder="Lunes a Sábado" /></label>
-            <label>Horario línea 2<input name="hours2" placeholder="8 AM a 5 PM." /></label>
-            <label>WhatsApp<input name="waLink" placeholder="https://wa.me/..." /></label>
-            <label>Telegram (canal/perfil)<input name="tgLink" placeholder="https://t.me/..." /></label>
-            <label>Telegram (soporte)<input name="tgLink2" placeholder="https://t.me/..." /></label>
-            <label>Bio.link / otra red<input name="bioLink" placeholder="https://bio.link/..." /></label>
-          </div>
-          <button class="btn btn-primary" type="submit">Guardar configuración</button>
-        </form>
-      </div>
+    <div class="filter-bar">
+      <input type="search" id="searchBox" placeholder="Buscar caja..." />
     </div>
-  </section>
+    <div class="grid-cards" id="boxesGrid"></div>
+  </div>
+</section>
 
-</main>
+<!-- Registration -->
+<section class="section" id="registro">
+  <div class="container narrow">
+    <div class="section-head">
+      <h2>Solicitar <span class="accent">Alquiler / Registro</span></h2>
+      <p>Completa el formulario y nos pondremos en contacto contigo.</p>
+    </div>
+    <form id="registerForm" class="form-card">
+      <div class="row">
+        <label>Nombre completo *<input type="text" name="name" required maxlength="80" /></label>
+        <label>Teléfono / WhatsApp *<input type="tel" name="phone" required maxlength="30" /></label>
+      </div>
+      <div class="row">
+        <label>Email<input type="email" name="email" maxlength="120" /></label>
+        <label>País / Ciudad<input type="text" name="location" maxlength="80" /></label>
+      </div>
+      <label>Caja de interés
+        <select name="box" id="boxSelect"><option value="">-- Seleccionar --</option></select>
+      </label>
+      <label>Mensaje
+        <textarea name="message" maxlength="500" rows="4" placeholder="Cuéntanos qué necesitas..."></textarea>
+      </label>
+      <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-paper-plane"></i> Enviar Solicitud</button>
+    </form>
+  </div>
+</section>
 
-<!-- INFO MODAL -->
-<div class="modal" id="infoModal" hidden>
-  <div class="modal-content card">
-    <button class="modal-close" id="modalClose">&times;</button>
-    <div id="modalBody"></div>
+<!-- Contact -->
+<section class="section dark" id="contacto">
+  <div class="container">
+    <div class="section-head">
+      <h2><span class="accent">Contáctanos</span></h2>
+      <p>Estamos disponibles en tus canales favoritos.</p>
+    </div>
+    <div class="contact-grid">
+      <a href="https://wa.me/0000000000" target="_blank" rel="noopener" class="ctc wa"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
+      <a href="https://t.me/unlockbox" target="_blank" rel="noopener" class="ctc tg"><i class="fa-brands fa-telegram"></i><span>Telegram</span></a>
+      <a href="https://facebook.com/unlockbox" target="_blank" rel="noopener" class="ctc fb"><i class="fa-brands fa-facebook"></i><span>Facebook</span></a>
+      <a href="tel:+0000000000" class="ctc ph"><i class="fa-solid fa-phone"></i><span>Llamar</span></a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div>
+      <div class="brand"><i class="fa-solid fa-unlock-keyhole"></i><span>UNLOCK<strong>BOX</strong></span></div>
+      <p>Servicios profesionales de alquiler de cajas de desbloqueo.</p>
+    </div>
+    <div>
+      <h4>Métodos de pago</h4>
+      <p>CUP · MLC · Zelle · USDT · Peso MX</p>
+    </div>
+    <div>
+      <h4>Horario</h4>
+      <p>Lunes a Sábado<br/>8:00 AM - 5:00 PM</p>
+    </div>
+  </div>
+  <div class="copy">© <span id="year"></span> UnlockBox. Todos los derechos reservados.</div>
+</footer>
+
+<!-- Box detail modal -->
+<div class="modal" id="boxModal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel">
+    <button class="modal-close" data-close>&times;</button>
+    <div id="boxModalContent"></div>
   </div>
 </div>
 
-<footer class="footer">
-  <div class="container">
-    <p>© <span id="year"></span> <strong>UnlockBox</strong> · Servicios de alquiler de decodificadores y unlock</p>
-    <p class="footer-sub">Soporte profesional · Lunes a Sábado</p>
+<!-- Admin login modal -->
+<div class="modal" id="adminLogin" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel small">
+    <button class="modal-close" data-close>&times;</button>
+    <h3><i class="fa-solid fa-user-shield"></i> Acceso Administrador</h3>
+    <p class="muted">Contraseña por defecto: <code>admin123</code> (cámbiala en <code>js/app.js</code>).</p>
+    <form id="adminLoginForm">
+      <input type="password" id="adminPass" placeholder="Contraseña" required />
+      <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+    </form>
   </div>
-</footer>
+</div>
 
-<script src="app.js"></script>
+<!-- Admin Panel -->
+<div class="modal" id="adminPanel" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel xl">
+    <button class="modal-close" data-close>&times;</button>
+    <div class="admin-tabs">
+      <button class="tab active" data-tab="boxes">Cajas</button>
+      <button class="tab" data-tab="clients">Clientes</button>
+      <button class="tab" data-tab="export">Exportar / Importar</button>
+      <button class="tab logout" id="adminLogout">Salir</button>
+    </div>
+
+    <div class="tab-pane active" id="tab-boxes">
+      <div class="admin-head">
+        <h3>Gestión de Cajas</h3>
+        <button class="btn btn-primary" id="newBoxBtn"><i class="fa-solid fa-plus"></i> Nueva Caja</button>
+      </div>
+      <div class="admin-list" id="adminBoxList"></div>
+    </div>
+
+    <div class="tab-pane" id="tab-clients">
+      <h3>Clientes / Solicitudes</h3>
+      <div class="admin-list" id="adminClientList"></div>
+    </div>
+
+    <div class="tab-pane" id="tab-export">
+      <h3>Backup de datos</h3>
+      <p class="muted">Tus datos se almacenan localmente en el navegador (localStorage). Exporta para respaldar.</p>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="exportBtn"><i class="fa-solid fa-download"></i> Exportar JSON</button>
+        <label class="btn btn-ghost"><i class="fa-solid fa-upload"></i> Importar JSON<input type="file" id="importFile" accept="application/json" hidden /></label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Box editor modal -->
+<div class="modal" id="boxEditor" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel">
+    <button class="modal-close" data-close>&times;</button>
+    <h3 id="editorTitle">Nueva Caja</h3>
+    <form id="boxForm" class="form-card flat">
+      <input type="hidden" name="id" />
+      <div class="row">
+        <label>Nombre *<input name="name" required maxlength="80" /></label>
+        <label>Precio (USD/mes)<input name="price" type="number" min="0" step="0.01" /></label>
+      </div>
+      <label>Imagen (URL o subir)
+        <input name="image" placeholder="https://..." />
+        <input type="file" id="imageFile" accept="image/*" />
+      </label>
+      <label>Descripción corta<input name="short" maxlength="160" /></label>
+      <label>Descripción completa<textarea name="description" rows="4" maxlength="1500"></textarea></label>
+      <label>Características (una por línea)<textarea name="features" rows="3"></textarea></label>
+      <h4>Enlaces de descarga</h4>
+      <div id="downloadsWrap"></div>
+      <button type="button" class="btn btn-ghost btn-sm" id="addDownload"><i class="fa-solid fa-plus"></i> Añadir enlace</button>
+      <h4>Contactos</h4>
+      <div class="row">
+        <label>WhatsApp (número)<input name="whatsapp" placeholder="5354975132" /></label>
+        <label>Telegram (usuario o url)<input name="telegram" placeholder="@usuario" /></label>
+      </div>
+      <div class="row">
+        <label>Facebook (url)<input name="facebook" /></label>
+        <label>Teléfono<input name="phone" /></label>
+      </div>
+      <label>Más información (URL externa opcional)<input name="moreInfo" placeholder="https://..." /></label>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Guardar</button>
+        <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast" id="toast"></div>
+
+<script src="js/app.js"></script>
 <script>
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
 </script>
