@@ -3,67 +3,186 @@
    Data persisted in localStorage.
 ===================================================== */
 
-// ⚠️ Cambia esta contraseña para tu administrador
-const ADMIN_PASSWORD = 'admin123';
+const DEFAULT_PASSWORD = '1234';
+const DEFAULT_RECOVERY_ANSWER = 'unlock';
 
 const STORAGE = {
   boxes: 'ub_boxes_v1',
   clients: 'ub_clients_v1',
-  session: 'ub_admin_session'
+  session: 'ub_admin_session',
+  settings: 'ub_settings_v2',
+  auth: 'ub_auth_v1',
+  subs: 'ub_subs_v1'
 };
-
-const DEFAULT_BOXES = [
-  {
-    id: cryptoId(),
-    name: 'iRemoval PRO',
-    price: 25,
-    image: 'images/box-sample.jpg',
-    short: 'iCloud Bypass con señal para iPhone XR a 15 Pro Max.',
-    description: 'Solución definitiva de bypass de iCloud con señal. Compatible con iPhone XR hasta iPhone 15 Pro Max. Incluye soporte y actualizaciones.',
-    features: ['Bypass iCloud con señal', 'iPhone XR - 15 Pro Max', 'Soporte 24/7', 'Actualizaciones gratis'],
-    downloads: [
-      { label: 'Descargar v2.3', url: '#' },
-      { label: 'Manual PDF', url: '#' }
-    ],
-    whatsapp: '5354975132',
-    telegram: 'https://t.me/siouxs_unlock',
-    facebook: 'https://facebook.com',
-    phone: '+5354975132',
-    moreInfo: 'https://iremoval.pro'
-  },
-  {
-    id: cryptoId(),
-    name: 'Unlock Tool',
-    price: 18,
-    image: 'images/box-sample.jpg',
-    short: 'Herramienta multimarca para FRP, MDM y desbloqueo.',
-    description: 'Caja universal de desbloqueo para múltiples marcas Android. Soporte para FRP, MDM, patrón, PIN y más.',
-    features: ['Multi-marca Android', 'FRP / MDM bypass', 'Actualizaciones diarias'],
-    downloads: [{ label: 'Última versión', url: '#' }],
-    whatsapp: '5354975132',
-    telegram: '@unlockbox',
-    facebook: '',
-    phone: '+5354975132',
-    moreInfo: ''
-  }
-];
 
 /* ============ Utils ============ */
 function cryptoId() { return 'b_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
 function $(sel, root = document) { return root.querySelector(sel); }
 function $$(sel, root = document) { return [...root.querySelectorAll(sel)]; }
-function load(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
+function load(key, fallback) { try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch { return fallback; } }
 function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 function escapeHtml(s = '') { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function toast(msg) {
   const el = $('#toast'); el.textContent = msg; el.classList.add('show');
   clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('show'), 2800);
 }
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* ============ Defaults ============ */
+const DEFAULT_SETTINGS = {
+  contacts: {
+    phone: '+53 0000 0000',
+    email: 'contacto@unlockbox.com',
+    schedule: 'Lun - Sáb · 8AM - 5PM',
+    address: ''
+  },
+  payments: [
+    { id: cryptoId(), name: 'CUP', details: 'Transferencia móvil' },
+    { id: cryptoId(), name: 'MLC', details: 'Tarjeta MLC' },
+    { id: cryptoId(), name: 'Zelle', details: '' },
+    { id: cryptoId(), name: 'USDT', details: 'TRC20 / BEP20' }
+  ],
+  social: {
+    whatsapp: '5354975132',
+    telegram: 'https://t.me/siouxs_unlock',
+    facebook: '',
+    instagram: '',
+    youtube: '',
+    twitter: '',
+    tiktok: '',
+    emailLink: 'mailto:contacto@unlockbox.com'
+  }
+};
+
+const DEFAULT_BOXES = [
+  {
+    id: cryptoId(),
+    name: 'iRemoval PRO', price: 25, image: 'images/box-sample.jpg',
+    short: 'iCloud Bypass con señal para iPhone XR a 15 Pro Max.',
+    description: 'Solución definitiva de bypass de iCloud con señal. Compatible con iPhone XR hasta iPhone 15 Pro Max. Incluye soporte y actualizaciones.',
+    features: ['Bypass iCloud con señal', 'iPhone XR - 15 Pro Max', 'Soporte 24/7', 'Actualizaciones gratis'],
+    downloads: [{ label: 'Descargar v2.3', url: '#' }, { label: 'Manual PDF', url: '#' }],
+    whatsapp: '5354975132', telegram: 'https://t.me/siouxs_unlock',
+    facebook: '', phone: '+5354975132', moreInfo: 'https://iremoval.pro'
+  },
+  {
+    id: cryptoId(),
+    name: 'Unlock Tool', price: 18, image: 'images/box-sample.jpg',
+    short: 'Herramienta multimarca para FRP, MDM y desbloqueo.',
+    description: 'Caja universal de desbloqueo para múltiples marcas Android. Soporte para FRP, MDM, patrón, PIN y más.',
+    features: ['Multi-marca Android', 'FRP / MDM bypass', 'Actualizaciones diarias'],
+    downloads: [{ label: 'Última versión', url: '#' }],
+    whatsapp: '5354975132', telegram: '@unlockbox',
+    facebook: '', phone: '+5354975132', moreInfo: ''
+  }
+];
 
 /* ============ State ============ */
 let boxes = load(STORAGE.boxes, null);
 if (!boxes) { boxes = DEFAULT_BOXES; save(STORAGE.boxes, boxes); }
 let clients = load(STORAGE.clients, []);
+let settings = load(STORAGE.settings, null);
+if (!settings) { settings = DEFAULT_SETTINGS; save(STORAGE.settings, settings); }
+else {
+  // merge missing keys
+  settings.contacts = { ...DEFAULT_SETTINGS.contacts, ...(settings.contacts || {}) };
+  settings.social = { ...DEFAULT_SETTINGS.social, ...(settings.social || {}) };
+  settings.payments = settings.payments || DEFAULT_SETTINGS.payments;
+}
+let subs = load(STORAGE.subs, []);
+
+/* ============ Auth bootstrap ============ */
+async function ensureAuth() {
+  let auth = load(STORAGE.auth, null);
+  if (!auth) {
+    auth = {
+      passHash: await sha256(DEFAULT_PASSWORD),
+      question: '¿Palabra clave de seguridad?',
+      answerHash: await sha256(DEFAULT_RECOVERY_ANSWER.toLowerCase())
+    };
+    save(STORAGE.auth, auth);
+  }
+  return auth;
+}
+
+/* ============ Render: Topbar / Contact / Social / Footer ============ */
+function renderTopbar() {
+  const c = settings.contacts;
+  $('#topbarInner').innerHTML = `
+    ${c.phone ? `<span><i class="fa-solid fa-phone"></i> ${escapeHtml(c.phone)}</span>` : ''}
+    ${c.email ? `<span><i class="fa-solid fa-envelope"></i> ${escapeHtml(c.email)}</span>` : ''}
+    ${c.schedule ? `<span><i class="fa-solid fa-clock"></i> ${escapeHtml(c.schedule)}</span>` : ''}
+  `;
+}
+
+function tgLink(t) {
+  if (!t) return '#';
+  if (/^https?:/.test(t)) return t;
+  return 'https://t.me/' + t.replace(/^@/, '');
+}
+function waLink(n) {
+  if (!n) return '#';
+  if (/^https?:/.test(n)) return n;
+  return 'https://wa.me/' + encodeURIComponent(String(n).replace(/\D/g,''));
+}
+
+function renderSocialRail() {
+  const s = settings.social;
+  const items = [
+    s.whatsapp && { cls:'wa', href: waLink(s.whatsapp), icon:'fa-brands fa-whatsapp', label:'WhatsApp' },
+    s.telegram && { cls:'tg', href: tgLink(s.telegram), icon:'fa-brands fa-telegram', label:'Telegram' },
+    s.facebook && { cls:'fb', href: s.facebook, icon:'fa-brands fa-facebook', label:'Facebook' },
+    s.instagram && { cls:'ig', href: s.instagram, icon:'fa-brands fa-instagram', label:'Instagram' },
+    s.youtube && { cls:'yt', href: s.youtube, icon:'fa-brands fa-youtube', label:'YouTube' },
+    s.twitter && { cls:'tw', href: s.twitter, icon:'fa-brands fa-x-twitter', label:'X' },
+    s.tiktok && { cls:'tk', href: s.tiktok, icon:'fa-brands fa-tiktok', label:'TikTok' },
+    s.emailLink && { cls:'em', href: s.emailLink, icon:'fa-solid fa-envelope', label:'Email' }
+  ].filter(Boolean);
+  $('#socialRail').innerHTML = items.map(i =>
+    `<a class="${i.cls}" href="${escapeHtml(i.href)}" target="_blank" rel="noopener" title="${i.label}" aria-label="${i.label}"><i class="${i.icon}"></i></a>`
+  ).join('');
+}
+
+function renderContactGrid() {
+  const s = settings.social, c = settings.contacts;
+  const items = [
+    s.whatsapp && { cls:'wa', href: waLink(s.whatsapp), icon:'fa-brands fa-whatsapp', label:'WhatsApp' },
+    s.telegram && { cls:'tg', href: tgLink(s.telegram), icon:'fa-brands fa-telegram', label:'Telegram' },
+    s.facebook && { cls:'fb', href: s.facebook, icon:'fa-brands fa-facebook', label:'Facebook' },
+    c.phone && { cls:'ph', href: 'tel:' + c.phone.replace(/\s/g,''), icon:'fa-solid fa-phone', label:'Llamar' }
+  ].filter(Boolean);
+  $('#contactGrid').innerHTML = items.map(i =>
+    `<a href="${escapeHtml(i.href)}" target="_blank" rel="noopener" class="ctc ${i.cls}"><i class="${i.icon}"></i><span>${i.label}</span></a>`
+  ).join('');
+}
+
+function renderBottomContacts() {
+  const c = settings.contacts;
+  $('#bottomContacts').innerHTML = `
+    <h3><i class="fa-solid fa-headset"></i> Contáctanos</h3>
+    ${c.phone ? `<div class="bc-item"><i class="fa-solid fa-phone"></i> <span>${escapeHtml(c.phone)}</span></div>` : ''}
+    ${c.email ? `<div class="bc-item"><i class="fa-solid fa-envelope"></i> <span>${escapeHtml(c.email)}</span></div>` : ''}
+    ${c.schedule ? `<div class="bc-item"><i class="fa-solid fa-clock"></i> <span>${escapeHtml(c.schedule)}</span></div>` : ''}
+    ${c.address ? `<div class="bc-item"><i class="fa-solid fa-location-dot"></i> <span>${escapeHtml(c.address)}</span></div>` : ''}
+  `;
+}
+
+function renderFooter() {
+  $('#footerPayments').textContent = (settings.payments || []).map(p => p.name).join(' · ') || '—';
+  $('#footerSchedule').textContent = settings.contacts.schedule || '—';
+}
+
+function renderAll() {
+  renderTopbar();
+  renderSocialRail();
+  renderContactGrid();
+  renderBottomContacts();
+  renderFooter();
+  renderBoxes();
+}
 
 /* ============ Render: Public Boxes ============ */
 function renderBoxes(filter = '') {
@@ -83,7 +202,7 @@ function renderBoxes(filter = '') {
         <h3>${escapeHtml(b.name)}</h3>
         <p>${escapeHtml(b.short || '')}</p>
         <div class="box-actions">
-          ${b.whatsapp ? `<a class="icon-btn wa" title="WhatsApp" target="_blank" rel="noopener" href="https://wa.me/${encodeURIComponent(b.whatsapp.replace(/\D/g,''))}"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
+          ${b.whatsapp ? `<a class="icon-btn wa" title="WhatsApp" target="_blank" rel="noopener" href="${waLink(b.whatsapp)}"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
           ${b.telegram ? `<a class="icon-btn tg" title="Telegram" target="_blank" rel="noopener" href="${tgLink(b.telegram)}"><i class="fa-brands fa-telegram"></i></a>` : ''}
           ${b.facebook ? `<a class="icon-btn fb" title="Facebook" target="_blank" rel="noopener" href="${escapeHtml(b.facebook)}"><i class="fa-brands fa-facebook"></i></a>` : ''}
           ${b.phone ? `<a class="icon-btn ph" title="Llamar" href="tel:${escapeHtml(b.phone)}"><i class="fa-solid fa-phone"></i></a>` : ''}
@@ -96,12 +215,6 @@ function renderBoxes(filter = '') {
   `).join('');
   $('#statBoxes').textContent = boxes.length;
   refreshBoxSelect();
-}
-
-function tgLink(t) {
-  if (!t) return '#';
-  if (/^https?:/.test(t)) return t;
-  return 'https://t.me/' + t.replace(/^@/, '');
 }
 
 function refreshBoxSelect() {
@@ -127,7 +240,7 @@ function openBoxDetail(id) {
       <div class="dl-list">${b.downloads.map(d => `<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener"><i class="fa-solid fa-download"></i> ${escapeHtml(d.label || 'Descargar')}</a>`).join('')}</div>` : ''}
     <h4 style="margin-top:14px;font-size:13px;color:var(--primary-2);text-transform:uppercase;letter-spacing:1px">Contacto</h4>
     <div class="box-actions" style="border:none;padding-top:0">
-      ${b.whatsapp ? `<a class="icon-btn wa" target="_blank" rel="noopener" href="https://wa.me/${encodeURIComponent(b.whatsapp.replace(/\D/g,''))}"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
+      ${b.whatsapp ? `<a class="icon-btn wa" target="_blank" rel="noopener" href="${waLink(b.whatsapp)}"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
       ${b.telegram ? `<a class="icon-btn tg" target="_blank" rel="noopener" href="${tgLink(b.telegram)}"><i class="fa-brands fa-telegram"></i></a>` : ''}
       ${b.facebook ? `<a class="icon-btn fb" target="_blank" rel="noopener" href="${escapeHtml(b.facebook)}"><i class="fa-brands fa-facebook"></i></a>` : ''}
       ${b.phone ? `<a class="icon-btn ph" href="tel:${escapeHtml(b.phone)}"><i class="fa-solid fa-phone"></i></a>` : ''}
@@ -167,8 +280,7 @@ $('#registerForm').addEventListener('submit', e => {
   if (!name || name.length < 2) return toast('Nombre inválido');
   if (!phone || phone.length < 6) return toast('Teléfono inválido');
   const client = {
-    id: cryptoId(),
-    name, phone,
+    id: cryptoId(), name, phone,
     email: (fd.get('email') || '').toString().trim(),
     location: (fd.get('location') || '').toString().trim(),
     box: (fd.get('box') || '').toString(),
@@ -182,19 +294,53 @@ $('#registerForm').addEventListener('submit', e => {
   $('#statClients').textContent = clients.length;
 });
 
+/* ============ Newsletter ============ */
+$('#newsletterForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = e.target.email.value.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Email inválido');
+  if (subs.find(s => s.email === email)) { toast('Ya estás suscrito'); return; }
+  subs.unshift({ id: cryptoId(), email, date: new Date().toISOString() });
+  save(STORAGE.subs, subs);
+  e.target.reset();
+  toast('¡Suscripción confirmada!');
+});
+
 /* ============ Admin auth ============ */
 $('#adminBtn').addEventListener('click', e => {
   e.preventDefault();
   if (sessionStorage.getItem(STORAGE.session) === '1') openAdminPanel();
   else openModal('#adminLogin');
 });
-$('#adminLoginForm').addEventListener('submit', e => {
+$('#adminLoginForm').addEventListener('submit', async e => {
   e.preventDefault();
-  if ($('#adminPass').value === ADMIN_PASSWORD) {
+  const auth = await ensureAuth();
+  const h = await sha256($('#adminPass').value);
+  if (h === auth.passHash) {
     sessionStorage.setItem(STORAGE.session, '1');
     $('#adminPass').value = '';
     openAdminPanel();
   } else toast('Contraseña incorrecta');
+});
+$('#forgotPassBtn').addEventListener('click', async e => {
+  e.preventDefault();
+  const auth = await ensureAuth();
+  $('#recoverQuestionLabel').textContent = auth.question || '¿Respuesta de seguridad?';
+  closeModals(); openModal('#recoverModal');
+});
+$('#recoverForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const auth = await ensureAuth();
+  const ans = $('#recoverAnswer').value.trim().toLowerCase();
+  const newp = $('#recoverNewPass').value;
+  const h = await sha256(ans);
+  if (h !== auth.answerHash) return toast('Respuesta incorrecta');
+  if (newp.length < 3) return toast('Contraseña muy corta');
+  auth.passHash = await sha256(newp);
+  save(STORAGE.auth, auth);
+  e.target.reset();
+  toast('Contraseña actualizada. Inicia sesión.');
+  closeModals(); openModal('#adminLogin');
 });
 $('#adminLogout').addEventListener('click', () => {
   sessionStorage.removeItem(STORAGE.session);
@@ -204,6 +350,7 @@ $('#adminLogout').addEventListener('click', () => {
 function openAdminPanel() {
   closeModals(); openModal('#adminPanel');
   renderAdminBoxes(); renderAdminClients();
+  loadContactsForm(); renderPayments(); loadSocialForm(); renderSubs();
 }
 
 /* ============ Admin Tabs ============ */
@@ -247,6 +394,14 @@ document.addEventListener('click', e => {
       clients = clients.filter(c => c.id !== delc.dataset.delclient);
       save(STORAGE.clients, clients); renderAdminClients(); $('#statClients').textContent = clients.length;
     }
+  }
+  const delp = e.target.closest('[data-delpay]'); if (delp) {
+    settings.payments = settings.payments.filter(p => p.id !== delp.dataset.delpay);
+    save(STORAGE.settings, settings); renderPayments(); renderFooter(); toast('Eliminado');
+  }
+  const dels = e.target.closest('[data-delsub]'); if (dels) {
+    subs = subs.filter(s => s.id !== dels.dataset.delsub);
+    save(STORAGE.subs, subs); renderSubs();
   }
 });
 
@@ -348,7 +503,7 @@ function renderAdminClients() {
         <small style="display:block;color:var(--muted);margin-top:4px">${new Date(c.date).toLocaleString()}</small>
       </div>
       <div class="actions">
-        ${c.phone ? `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="https://wa.me/${encodeURIComponent(c.phone.replace(/\D/g,''))}" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
+        ${c.phone ? `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="${waLink(c.phone)}" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
         <button class="btn btn-ghost btn-sm" data-delclient="${c.id}" style="color:var(--accent)"><i class="fa-solid fa-trash"></i></button>
       </div>
     </div>
@@ -356,9 +511,116 @@ function renderAdminClients() {
   $('#statClients').textContent = clients.length;
 }
 
+/* ============ Admin: Contacts ============ */
+function loadContactsForm() {
+  const f = $('#contactsForm');
+  f.phone.value = settings.contacts.phone || '';
+  f.email.value = settings.contacts.email || '';
+  f.schedule.value = settings.contacts.schedule || '';
+  f.address.value = settings.contacts.address || '';
+}
+$('#contactsForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  settings.contacts = {
+    phone: f.phone.value.trim(),
+    email: f.email.value.trim(),
+    schedule: f.schedule.value.trim(),
+    address: f.address.value.trim()
+  };
+  save(STORAGE.settings, settings);
+  renderTopbar(); renderBottomContacts(); renderContactGrid(); renderFooter();
+  toast('Contactos actualizados');
+});
+
+/* ============ Admin: Payments ============ */
+function renderPayments() {
+  $('#paymentsList').innerHTML = (settings.payments || []).map(p => `
+    <div class="admin-item">
+      <div style="width:50px;height:50px;border-radius:10px;background:var(--grad-primary);display:grid;place-items:center;flex-shrink:0"><i class="fa-solid fa-credit-card"></i></div>
+      <div class="info">
+        <input data-payname="${p.id}" value="${escapeHtml(p.name)}" placeholder="Nombre (ej: Zelle)" />
+        <input data-paydet="${p.id}" value="${escapeHtml(p.details || '')}" placeholder="Detalles (cuenta, etc)" style="margin-top:6px" />
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost btn-sm" data-delpay="${p.id}" style="color:var(--accent)"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('') || `<p class="muted">Sin métodos de pago.</p>`;
+  $$('[data-payname]').forEach(i => i.addEventListener('input', e => {
+    const p = settings.payments.find(x => x.id === e.target.dataset.payname);
+    if (p) { p.name = e.target.value; save(STORAGE.settings, settings); renderFooter(); }
+  }));
+  $$('[data-paydet]').forEach(i => i.addEventListener('input', e => {
+    const p = settings.payments.find(x => x.id === e.target.dataset.paydet);
+    if (p) { p.details = e.target.value; save(STORAGE.settings, settings); }
+  }));
+}
+$('#addPaymentBtn').addEventListener('click', () => {
+  settings.payments.push({ id: cryptoId(), name: 'Nuevo', details: '' });
+  save(STORAGE.settings, settings); renderPayments();
+});
+
+/* ============ Admin: Social ============ */
+function loadSocialForm() {
+  const f = $('#socialForm');
+  Object.entries(settings.social).forEach(([k,v]) => { if (f[k]) f[k].value = v || ''; });
+}
+$('#socialForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  ['whatsapp','telegram','facebook','instagram','youtube','twitter','tiktok','emailLink'].forEach(k => {
+    settings.social[k] = (f[k]?.value || '').trim();
+  });
+  save(STORAGE.settings, settings);
+  renderSocialRail(); renderContactGrid();
+  toast('Redes sociales actualizadas');
+});
+
+/* ============ Admin: Newsletter subs ============ */
+function renderSubs() {
+  $('#subsList').innerHTML = subs.map(s => `
+    <div class="admin-item">
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--grad-primary);display:grid;place-items:center;flex-shrink:0"><i class="fa-solid fa-envelope"></i></div>
+      <div class="info"><strong>${escapeHtml(s.email)}</strong><small>${new Date(s.date).toLocaleString()}</small></div>
+      <div class="actions"><button class="btn btn-ghost btn-sm" data-delsub="${s.id}" style="color:var(--accent)"><i class="fa-solid fa-trash"></i></button></div>
+    </div>
+  `).join('') || `<p class="muted">Aún no hay suscriptores.</p>`;
+}
+$('#exportSubsBtn').addEventListener('click', () => {
+  if (!subs.length) return toast('Sin suscriptores');
+  const csv = 'email,fecha\n' + subs.map(s => `${s.email},${s.date}`).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `suscriptores-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+/* ============ Admin: Security ============ */
+$('#securityForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target;
+  const auth = await ensureAuth();
+  const curHash = await sha256(f.current.value);
+  if (curHash !== auth.passHash) return toast('Contraseña actual incorrecta');
+  const newp = f.newPass.value, newp2 = f.newPass2.value;
+  if (newp || newp2) {
+    if (newp !== newp2) return toast('Las contraseñas no coinciden');
+    if (newp.length < 3) return toast('Contraseña muy corta');
+    auth.passHash = await sha256(newp);
+  }
+  if (f.question.value.trim()) auth.question = f.question.value.trim();
+  if (f.answer.value.trim()) auth.answerHash = await sha256(f.answer.value.trim().toLowerCase());
+  save(STORAGE.auth, auth);
+  f.reset();
+  toast('Seguridad actualizada');
+});
+
 /* ============ Export / Import ============ */
 $('#exportBtn').addEventListener('click', () => {
-  const data = JSON.stringify({ boxes, clients, exportedAt: new Date().toISOString() }, null, 2);
+  const data = JSON.stringify({ boxes, clients, settings, subs, exportedAt: new Date().toISOString() }, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -375,7 +637,9 @@ $('#importFile').addEventListener('change', e => {
       const data = JSON.parse(r.result);
       if (data.boxes) { boxes = data.boxes; save(STORAGE.boxes, boxes); }
       if (data.clients) { clients = data.clients; save(STORAGE.clients, clients); }
-      renderBoxes(); renderAdminBoxes(); renderAdminClients();
+      if (data.settings) { settings = data.settings; save(STORAGE.settings, settings); }
+      if (data.subs) { subs = data.subs; save(STORAGE.subs, subs); }
+      renderAll(); renderAdminBoxes(); renderAdminClients(); renderPayments(); renderSubs(); loadContactsForm(); loadSocialForm();
       toast('Datos importados');
     } catch { toast('Archivo inválido'); }
   };
@@ -383,6 +647,7 @@ $('#importFile').addEventListener('change', e => {
 });
 
 /* ============ Init ============ */
-renderBoxes();
+ensureAuth();
+renderAll();
 $('#statClients').textContent = clients.length;
 $('#year').textContent = new Date().getFullYear();

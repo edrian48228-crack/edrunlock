@@ -9,20 +9,15 @@
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" type="image/png" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-<link rel="stylesheet" href="css/styles.css" />
+<link rel="stylesheet" href="css/styles.css?v=2" />
 </head>
 <body>
 
 <!-- Top bar -->
 <div class="topbar">
-  <div class="container topbar-inner">
-    <span><i class="fa-solid fa-phone"></i> +53 0000 0000</span>
-    <span><i class="fa-solid fa-envelope"></i> contacto@unlockbox.com</span>
-    <span><i class="fa-solid fa-clock"></i> Lun - Sáb · 8AM - 5PM</span>
+  <div class="container topbar-inner" id="topbarInner">
+    <!-- rendered by JS from settings -->
   </div>
 </div>
 
@@ -44,6 +39,11 @@
     <button class="burger" id="burger" aria-label="Menú"><i class="fa-solid fa-bars"></i></button>
   </div>
 </header>
+
+<!-- Floating social sidebar (left) -->
+<aside class="social-rail" id="socialRail" aria-label="Redes sociales">
+  <!-- rendered by JS -->
+</aside>
 
 <!-- Hero -->
 <section class="hero" id="inicio">
@@ -128,11 +128,24 @@
       <h2><span class="accent">Contáctanos</span></h2>
       <p>Estamos disponibles en tus canales favoritos.</p>
     </div>
-    <div class="contact-grid">
-      <a href="https://wa.me/0000000000" target="_blank" rel="noopener" class="ctc wa"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
-      <a href="https://t.me/unlockbox" target="_blank" rel="noopener" class="ctc tg"><i class="fa-brands fa-telegram"></i><span>Telegram</span></a>
-      <a href="https://facebook.com/unlockbox" target="_blank" rel="noopener" class="ctc fb"><i class="fa-brands fa-facebook"></i><span>Facebook</span></a>
-      <a href="tel:+0000000000" class="ctc ph"><i class="fa-solid fa-phone"></i><span>Llamar</span></a>
+    <div class="contact-grid" id="contactGrid"></div>
+  </div>
+</section>
+
+<!-- Newsletter + bottom contacts -->
+<section class="section newsletter-section">
+  <div class="container newsletter-grid">
+    <div class="newsletter-card">
+      <h3><i class="fa-solid fa-envelope-open-text"></i> Suscríbete al boletín</h3>
+      <p>Recibe novedades sobre <strong>nuevas cajas</strong>, actualizaciones y promociones directamente en tu correo.</p>
+      <form id="newsletterForm" class="newsletter-form">
+        <input type="email" name="email" required placeholder="tu@email.com" maxlength="120" />
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Suscribirme</button>
+      </form>
+      <small class="muted">No compartimos tu correo. Puedes darte de baja cuando quieras.</small>
+    </div>
+    <div class="bottom-contacts" id="bottomContacts">
+      <!-- rendered by JS -->
     </div>
   </div>
 </section>
@@ -145,15 +158,18 @@
     </div>
     <div>
       <h4>Métodos de pago</h4>
-      <p>CUP · MLC · Zelle · USDT · Peso MX</p>
+      <p id="footerPayments">—</p>
     </div>
     <div>
       <h4>Horario</h4>
-      <p>Lunes a Sábado<br/>8:00 AM - 5:00 PM</p>
+      <p id="footerSchedule">—</p>
     </div>
   </div>
   <div class="copy">© <span id="year"></span> UnlockBox. Todos los derechos reservados.</div>
 </footer>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
 
 <!-- Box detail modal -->
 <div class="modal" id="boxModal" hidden>
@@ -170,11 +186,29 @@
   <div class="modal-panel small">
     <button class="modal-close" data-close>&times;</button>
     <h3><i class="fa-solid fa-user-shield"></i> Acceso Administrador</h3>
-    <p class="muted">Contraseña por defecto: <code>admin123</code> (cámbiala en <code>js/app.js</code>).</p>
     <form id="adminLoginForm">
       <input type="password" id="adminPass" placeholder="Contraseña" required />
       <button class="btn btn-primary btn-block" type="submit">Entrar</button>
     </form>
+    <p style="margin-top:14px;text-align:center">
+      <a href="#" id="forgotPassBtn" class="link">¿Olvidaste tu contraseña?</a>
+    </p>
+  </div>
+</div>
+
+<!-- Password recovery modal -->
+<div class="modal" id="recoverModal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel small">
+    <button class="modal-close" data-close>&times;</button>
+    <h3><i class="fa-solid fa-key"></i> Recuperar Contraseña</h3>
+    <p class="muted" id="recoverQuestionLabel">Responde tu pregunta de seguridad:</p>
+    <form id="recoverForm">
+      <input type="text" id="recoverAnswer" placeholder="Tu respuesta" required />
+      <input type="password" id="recoverNewPass" placeholder="Nueva contraseña" required minlength="3" />
+      <button class="btn btn-primary btn-block" type="submit">Cambiar contraseña</button>
+    </form>
+    <p class="muted" style="margin-top:10px;font-size:11px">Si no configuraste pregunta, la respuesta por defecto es <code>unlock</code>.</p>
   </div>
 </div>
 
@@ -184,12 +218,18 @@
   <div class="modal-panel xl">
     <button class="modal-close" data-close>&times;</button>
     <div class="admin-tabs">
-      <button class="tab active" data-tab="boxes">Cajas</button>
-      <button class="tab" data-tab="clients">Clientes</button>
-      <button class="tab" data-tab="export">Exportar / Importar</button>
-      <button class="tab logout" id="adminLogout">Salir</button>
+      <button class="tab active" data-tab="boxes"><i class="fa-solid fa-box"></i> Cajas</button>
+      <button class="tab" data-tab="clients"><i class="fa-solid fa-users"></i> Clientes</button>
+      <button class="tab" data-tab="contacts"><i class="fa-solid fa-address-book"></i> Contactos</button>
+      <button class="tab" data-tab="payments"><i class="fa-solid fa-credit-card"></i> Pagos</button>
+      <button class="tab" data-tab="social"><i class="fa-solid fa-share-nodes"></i> Redes</button>
+      <button class="tab" data-tab="newsletter"><i class="fa-solid fa-envelope"></i> Boletín</button>
+      <button class="tab" data-tab="security"><i class="fa-solid fa-lock"></i> Seguridad</button>
+      <button class="tab" data-tab="export"><i class="fa-solid fa-database"></i> Backup</button>
+      <button class="tab logout" id="adminLogout"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
     </div>
 
+    <!-- BOXES -->
     <div class="tab-pane active" id="tab-boxes">
       <div class="admin-head">
         <h3>Gestión de Cajas</h3>
@@ -198,11 +238,81 @@
       <div class="admin-list" id="adminBoxList"></div>
     </div>
 
+    <!-- CLIENTS -->
     <div class="tab-pane" id="tab-clients">
       <h3>Clientes / Solicitudes</h3>
       <div class="admin-list" id="adminClientList"></div>
     </div>
 
+    <!-- CONTACTS -->
+    <div class="tab-pane" id="tab-contacts">
+      <h3>Información de Contacto</h3>
+      <p class="muted">Estos datos se muestran en la barra superior, sección contacto y footer.</p>
+      <form id="contactsForm" class="form-card flat">
+        <div class="row">
+          <label>Teléfono principal<input name="phone" placeholder="+53 0000 0000" /></label>
+          <label>Email<input name="email" type="email" placeholder="contacto@unlockbox.com" /></label>
+        </div>
+        <label>Horario<input name="schedule" placeholder="Lun - Sáb · 8AM - 5PM" /></label>
+        <label>Dirección (opcional)<input name="address" placeholder="Ciudad, País" /></label>
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-save"></i> Guardar contactos</button>
+      </form>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="tab-pane" id="tab-payments">
+      <div class="admin-head">
+        <h3>Métodos de Pago</h3>
+        <button class="btn btn-primary btn-sm" id="addPaymentBtn"><i class="fa-solid fa-plus"></i> Añadir</button>
+      </div>
+      <p class="muted">Configura los métodos de pago que aceptas (aparecen en el footer).</p>
+      <div id="paymentsList" class="admin-list"></div>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="tab-pane" id="tab-social">
+      <h3>Redes Sociales</h3>
+      <p class="muted">Los enlaces aparecen en la barra lateral izquierda. Deja vacío para ocultar un icono.</p>
+      <form id="socialForm" class="form-card flat">
+        <div class="row"><label><i class="fa-brands fa-whatsapp"></i> WhatsApp (número)<input name="whatsapp" placeholder="5354975132" /></label>
+        <label><i class="fa-brands fa-telegram"></i> Telegram<input name="telegram" placeholder="https://t.me/usuario o @usuario" /></label></div>
+        <div class="row"><label><i class="fa-brands fa-facebook"></i> Facebook<input name="facebook" placeholder="https://facebook.com/..." /></label>
+        <label><i class="fa-brands fa-instagram"></i> Instagram<input name="instagram" placeholder="https://instagram.com/..." /></label></div>
+        <div class="row"><label><i class="fa-brands fa-youtube"></i> YouTube<input name="youtube" placeholder="https://youtube.com/@..." /></label>
+        <label><i class="fa-brands fa-x-twitter"></i> X / Twitter<input name="twitter" placeholder="https://x.com/..." /></label></div>
+        <div class="row"><label><i class="fa-brands fa-tiktok"></i> TikTok<input name="tiktok" placeholder="https://tiktok.com/@..." /></label>
+        <label><i class="fa-solid fa-envelope"></i> Email contacto<input name="emailLink" placeholder="mailto:contacto@..." /></label></div>
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-save"></i> Guardar redes</button>
+      </form>
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div class="tab-pane" id="tab-newsletter">
+      <h3>Suscriptores del Boletín</h3>
+      <p class="muted">Lista de personas suscritas a las novedades.</p>
+      <div class="btn-row">
+        <button class="btn btn-ghost btn-sm" id="exportSubsBtn"><i class="fa-solid fa-download"></i> Exportar emails (CSV)</button>
+      </div>
+      <div class="admin-list" id="subsList"></div>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="tab-pane" id="tab-security">
+      <h3>Seguridad</h3>
+      <p class="muted">Cambia tu contraseña y configura tu pregunta de recuperación.</p>
+      <form id="securityForm" class="form-card flat">
+        <label>Contraseña actual<input type="password" name="current" required /></label>
+        <div class="row">
+          <label>Nueva contraseña<input type="password" name="newPass" minlength="3" /></label>
+          <label>Repetir nueva contraseña<input type="password" name="newPass2" minlength="3" /></label>
+        </div>
+        <label>Pregunta de recuperación<input name="question" placeholder="Ej: ¿Nombre de mi mascota?" /></label>
+        <label>Respuesta de recuperación<input name="answer" placeholder="Respuesta (no se muestra a usuarios)" /></label>
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-shield-halved"></i> Actualizar seguridad</button>
+      </form>
+    </div>
+
+    <!-- EXPORT -->
     <div class="tab-pane" id="tab-export">
       <h3>Backup de datos</h3>
       <p class="muted">Tus datos se almacenan localmente en el navegador (localStorage). Exporta para respaldar.</p>
@@ -227,40 +337,42 @@
         <label>Precio (USD/mes)<input name="price" type="number" min="0" step="0.01" /></label>
       </div>
       <label>Imagen (URL o subir)
-        <input name="image" placeholder="https://..." />
-        <input type="file" id="imageFile" accept="image/*" />
+        <input name="image" placeholder="https://... o data:image/..." />
+      </label>
+      <label class="btn btn-ghost btn-sm" style="display:inline-flex;width:auto;margin-top:-8px">
+        <i class="fa-solid fa-upload"></i> Subir imagen
+        <input type="file" id="imageFile" accept="image/*" hidden />
       </label>
       <label>Descripción corta<input name="short" maxlength="160" /></label>
-      <label>Descripción completa<textarea name="description" rows="4" maxlength="1500"></textarea></label>
+      <label>Descripción completa<textarea name="description" rows="3" maxlength="800"></textarea></label>
       <label>Características (una por línea)<textarea name="features" rows="3"></textarea></label>
-      <h4>Enlaces de descarga</h4>
-      <div id="downloadsWrap"></div>
-      <button type="button" class="btn btn-ghost btn-sm" id="addDownload"><i class="fa-solid fa-plus"></i> Añadir enlace</button>
-      <h4>Contactos</h4>
       <div class="row">
-        <label>WhatsApp (número)<input name="whatsapp" placeholder="5354975132" /></label>
-        <label>Telegram (usuario o url)<input name="telegram" placeholder="@usuario" /></label>
+        <label>WhatsApp<input name="whatsapp" /></label>
+        <label>Telegram<input name="telegram" /></label>
       </div>
       <div class="row">
-        <label>Facebook (url)<input name="facebook" /></label>
+        <label>Facebook (URL)<input name="facebook" /></label>
         <label>Teléfono<input name="phone" /></label>
       </div>
-      <label>Más información (URL externa opcional)<input name="moreInfo" placeholder="https://..." /></label>
-      <div class="btn-row">
-        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Guardar</button>
-        <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+      <label>Más información (URL)<input name="moreInfo" /></label>
+
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong style="font-size:13px">Descargas</strong>
+          <button type="button" class="btn btn-ghost btn-sm" id="addDownload"><i class="fa-solid fa-plus"></i> Añadir</button>
+        </div>
+        <div id="downloadsWrap"></div>
       </div>
+
+      <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-save"></i> Guardar Caja</button>
     </form>
   </div>
 </div>
 
-<!-- Toasts -->
-<div class="toast" id="toast"></div>
-
-<script src="js/app.js"></script>
+<script src="js/app.js?v=2"></script>
 <script>
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
 }
 </script>
 </body>
