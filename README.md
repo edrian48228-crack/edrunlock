@@ -1,64 +1,36 @@
-# UnlockBox PWA
+# Taller — PWA de reparaciones (v2)
 
-Sitio web profesional para alquiler de cajas de desbloqueo (unlock boxes) y descodificadores.
-Construido con HTML + CSS + JavaScript puro, listo para alojar en GitHub Pages.
+Aplicación web instalable (PWA) para gestionar reparaciones electrónicas.
+Solo HTML, CSS, JavaScript y JSON. Sin backend ni dependencias.
 
-## ✨ Características
+## Novedades v2
+- **Sincronización GitHub vía API** (admin → token + usuario + repo + rama + ruta + auto-sync)
+- **Varias fotos del equipo** + foto del cliente
+- **Audio de aceptación** del cliente (grabar desde el navegador o subir archivo)
+- **"Sin datos disponibles"** en cada campo opcional
+- **Lista de equipos predefinida** y editable desde administración
+- **Guardar JSON en una ubicación** del dispositivo (File System Access API; auto-guardado)
+- **Migración automática y compatible** con datos creados en v1
 
-- 🎨 Diseño moderno, oscuro (negro + rojo/marrón)
-- 📱 100% responsive (móvil, tablet, escritorio)
-- ⚡ PWA instalable (funciona offline)
-- 🔐 Panel de administrador (contraseña por defecto: `admin123`)
-- 📦 Gestión de cajas: añadir, editar, eliminar
-- 👥 Sistema de registro/solicitudes de clientes
-- 💬 Iconos directos a WhatsApp, Telegram, Facebook, Teléfono
-- ⬇️ Enlaces de descarga por caja
-- ℹ️ Modal de más información por caja
-- 💾 Backup: exportar / importar JSON
-- 🔍 Buscador de cajas
+## Instalación en GitHub Pages
+1. Sube esta carpeta a un repositorio GitHub.
+2. Settings → Pages → Branch: `main` → carpeta `/`.
+3. Abre la URL desde Android Chrome → menú → "Instalar app".
 
-## 🚀 Subir a GitHub Pages
+## Sincronización con GitHub
+1. Crea un Personal Access Token (Fine-grained) con permiso **Contents: read/write** sobre tu repo.
+2. En la app: **Admin → Sincronización GitHub** → completa usuario, repo, rama, ruta del JSON y token.
+3. Activa "Sincronización automática". Cada cambio se sube como commit.
+4. En otro dispositivo: configura los mismos datos y pulsa **Bajar de GitHub**.
 
-1. Crea un repositorio nuevo en GitHub.
-2. Sube todos los archivos de esta carpeta.
-3. Ve a **Settings → Pages → Source → main branch / root**.
-4. Tu sitio estará en `https://TU_USUARIO.github.io/TU_REPO/`.
+> El token solo se guarda en `localStorage` del dispositivo.
 
-## 🔑 Cambiar la contraseña de administrador
+## Guardar JSON en una ubicación del dispositivo
+**Admin → Guardar JSON en una ubicación → Elegir ubicación**. La app escribirá
+automáticamente cada cambio en ese archivo (requiere Chrome/Edge en Android o escritorio).
 
-Edita `js/app.js`, línea ~7:
+## Compatibilidad
+El sistema usa `schemaVersion` y una función de migración. Versiones futuras
+seguirán abriendo los JSON antiguos sin perder datos.
 
-```js
-const ADMIN_PASSWORD = 'tu_nueva_contraseña';
-```
-
-## 📊 Datos
-
-Los datos (cajas y clientes) se guardan en `localStorage` del navegador. Para llevar los datos a otro dispositivo usa **Exportar / Importar JSON** dentro del panel de administrador.
-
-> ⚠️ Para una base de datos compartida entre múltiples usuarios necesitarías un backend (Firebase, Supabase, etc.). Esta versión es client-only para GitHub Pages.
-
-## 📂 Estructura
-
-```
-unlock-pwa/
-├── index.html
-├── manifest.json
-├── sw.js              ← Service Worker (PWA)
-├── css/styles.css
-├── js/app.js
-├── icons/             ← Íconos de la PWA
-└── images/            ← Imágenes (hero + cajas)
-```
-
-## 🧭 Uso
-
-- **Inicio:** Acceso directo al menú principal y al catálogo.
-- **Cajas:** Lista de todas las cajas con buscador.
-- **Registro:** Formulario para que clientes soliciten alquiler.
-- **Admin:** Botón superior derecho. Tras iniciar sesión podrás:
-  - Crear/editar/eliminar cajas
-  - Ver todas las solicitudes de clientes
-  - Hacer backup de tus datos
-
-¡Listo! 🎉
+Creado por **Edrian Cruz Down**.
