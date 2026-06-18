@@ -121,11 +121,17 @@ textarea { resize: vertical; }
   padding: 8px 14px; border-radius: var(--radius-sm); font-weight: 600;
 }
 .burger {
-  display: none; font-size: 22px; color: var(--text);
-  padding: 8px 10px; border-radius: 8px;
+  display: none; align-items: center; gap: 8px;
+  font-size: 16px; font-weight: 600; color: var(--text);
+  padding: 8px 14px; border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  cursor: pointer;
 }
-.burger:active { background: var(--surface-2); }
+.burger i { font-size: 18px; color: var(--primary-2); }
+.burger:active { background: var(--surface-2); transform: scale(.97); }
+.burger-label { line-height: 1; }
 
 /* ===== Social rail (left fixed) ===== */
 .social-rail {
@@ -465,7 +471,7 @@ textarea { resize: vertical; }
   .nav a.btn-pill, .nav a.btn-admin {
     margin-top: 10px; text-align: center; border-bottom: none;
   }
-  .burger { display: block; position: relative; z-index: 100; }
+  .burger { display: inline-flex; position: relative; z-index: 100; }
   body.nav-open { overflow: hidden; }
   body.nav-open::after {
     content: ''; position: fixed; inset: 0; z-index: 90;

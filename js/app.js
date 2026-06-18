@@ -33,6 +33,7 @@ async function sha256(text) {
 
 /* ============ Defaults ============ */
 const DEFAULT_SETTINGS = {
+  siteName: 'UNLOCK BOX',
   contacts: {
     phone: '+53 0000 0000',
     email: 'contacto@unlockbox.com',
@@ -88,6 +89,7 @@ let settings = load(STORAGE.settings, null);
 if (!settings) { settings = DEFAULT_SETTINGS; save(STORAGE.settings, settings); }
 else {
   // merge missing keys
+  if (!settings.siteName) settings.siteName = DEFAULT_SETTINGS.siteName;
   settings.contacts = { ...DEFAULT_SETTINGS.contacts, ...(settings.contacts || {}) };
   settings.social = { ...DEFAULT_SETTINGS.social, ...(settings.social || {}) };
   settings.payments = settings.payments || DEFAULT_SETTINGS.payments;
@@ -175,7 +177,27 @@ function renderFooter() {
   $('#footerSchedule').textContent = settings.contacts.schedule || '—';
 }
 
+/* Brand: respect case, color SECOND word red/brown via <strong> */
+function brandMarkup(name) {
+  const raw = (name || 'UNLOCK BOX').trim();
+  const parts = raw.split(/\s+/);
+  if (parts.length === 1) return escapeHtml(parts[0]);
+  const first = escapeHtml(parts[0]);
+  const second = escapeHtml(parts[1]);
+  const rest = parts.slice(2).map(escapeHtml).join(' ');
+  return `${first} <strong>${second}</strong>${rest ? ' ' + rest : ''}`;
+}
+function renderBrand() {
+  const html = brandMarkup(settings.siteName);
+  $$('.brand span, #brandText').forEach(el => { el.innerHTML = html; });
+  const plain = (settings.siteName || 'UNLOCK BOX').trim();
+  document.title = `${plain} - Alquiler de Cajas de Desbloqueo`;
+  const prev = $('#siteNamePreview');
+  if (prev) prev.innerHTML = html;
+}
+
 function renderAll() {
+  renderBrand();
   renderTopbar();
   renderSocialRail();
   renderContactGrid();
@@ -264,27 +286,33 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
 
-/* ============ Mobile nav ============ */
+/* ============ Mobile nav (hamburger) ============ */
 (function initMobileNav(){
   const nav = $('#nav');
   const burger = $('#burger');
+  if (!nav || !burger) return;
   function setOpen(open){
     nav.classList.toggle('open', open);
     document.body.classList.toggle('nav-open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    const icon = burger.querySelector('i');
+    const lbl  = burger.querySelector('.burger-label');
+    if (icon) icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+    if (lbl)  lbl.textContent = open ? 'Cerrar' : 'Menú';
   }
-  function toggle(e){
-    if (e) { e.preventDefault(); e.stopPropagation(); }
+  burger.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setOpen(!nav.classList.contains('open'));
-  }
-  if (burger) {
-    burger.addEventListener('click', toggle);
-    burger.addEventListener('touchend', toggle, { passive: false });
-  }
+  });
   $$('#nav a').forEach(a => a.addEventListener('click', () => setOpen(false)));
   document.addEventListener('click', e => {
     if (!nav.classList.contains('open')) return;
     if (e.target.closest('#nav') || e.target.closest('#burger')) return;
     setOpen(false);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && nav.classList.contains('open')) setOpen(false);
   });
 })();
 
@@ -371,6 +399,7 @@ function openAdminPanel() {
   closeModals(); openModal('#adminPanel');
   renderAdminBoxes(); renderAdminClients();
   loadContactsForm(); renderPayments(); loadSocialForm(); renderSubs();
+  loadSystemForm();
 }
 
 /* ============ Admin Tabs ============ */
@@ -619,6 +648,36 @@ $('#exportSubsBtn').addEventListener('click', () => {
 });
 
 /* ============ Admin: Security ============ */
+/* ============ Admin: System (site name) ============ */
+function loadSystemForm() {
+  const inp = $('#siteNameInput');
+  if (!inp) return;
+  inp.value = settings.siteName || 'UNLOCK BOX';
+  updateSystemPreview();
+}
+function updateSystemPreview() {
+  const v = ($('#siteNameInput')?.value || '').trim() || 'UNLOCK BOX';
+  const prev = $('#siteNamePreview');
+  if (prev) prev.innerHTML = brandMarkup(v);
+}
+document.addEventListener('input', e => {
+  if (e.target && e.target.id === 'siteNameInput') updateSystemPreview();
+});
+(function bindSystemForm(){
+  const f = $('#systemForm');
+  if (!f) return;
+  f.addEventListener('submit', e => {
+    e.preventDefault();
+    const v = (f.siteName.value || '').trim();
+    if (!v) return toast('Escribe un nombre');
+    if (v.length > 40) return toast('Nombre demasiado largo');
+    settings.siteName = v;
+    save(STORAGE.settings, settings);
+    renderBrand();
+    toast('Nombre del sistema actualizado');
+  });
+})();
+
 $('#securityForm').addEventListener('submit', async e => {
   e.preventDefault();
   const f = e.target;
