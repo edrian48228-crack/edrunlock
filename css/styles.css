@@ -417,7 +417,7 @@ textarea { resize: vertical; }
 input, textarea { -webkit-user-select: text !important; user-select: text !important; }
 .modal[hidden] { display: none !important; }
 .modal {
-  position: fixed; inset: 0; z-index: 100;
+  position: fixed; inset: 0; z-index: 20000;
   display: grid; place-items: center; padding: 20px;
 }
 .modal-backdrop {

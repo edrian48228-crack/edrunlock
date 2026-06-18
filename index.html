@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-<link rel="stylesheet" href="css/styles.css?v=13" />
+<link rel="stylesheet" href="css/styles.css?v=14" />
 </head>
 <body>
 
@@ -31,7 +31,16 @@
       <i class="fa-solid fa-unlock-keyhole"></i>
       <span id="brandText">UNLOCK<strong>BOX</strong></span>
     </a>
-    <!-- botón menú siempre visible -->
+    <!-- Nav desktop (visible solo en pantallas grandes) -->
+    <nav class="nav-desktop">
+      <a href="#inicio">Inicio</a>
+      <a href="#cajas">Cajas</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#registro" class="btn-pill">Registrarse</a>
+      <a href="#" id="adminBtn" class="btn-admin"><i class="fa-solid fa-user-shield"></i> Admin</a>
+    </nav>
+    <!-- botón menú (visible solo en mobile) -->
     <button id="menuBtn" type="button" aria-label="Abrir menú">
       <i class="fa-solid fa-bars"></i>
     </button>
@@ -414,7 +423,7 @@
     <button id="fmAdminBtn" type="button"><i class="fa-solid fa-user-shield"></i> Admin</button>
   </div>
 </div>
-<script src="js/app.js?v=13"></script>
+<script src="js/app.js?v=14"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));

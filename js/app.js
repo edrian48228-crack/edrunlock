@@ -389,6 +389,14 @@ $('#newsletterForm').addEventListener('submit', e => {
 });
 
 /* ============ Admin auth ============ */
+// Admin btn desktop
+const _adminBtnDesktop = document.getElementById('adminBtn');
+if (_adminBtnDesktop) _adminBtnDesktop.addEventListener('click', e => {
+  e.preventDefault();
+  if (sessionStorage.getItem(STORAGE.session) === '1') openAdminPanel();
+  else openModal('#adminLogin');
+});
+
 $('#fmAdminBtn').addEventListener('click', e => {
   e.preventDefault();
   if (sessionStorage.getItem(STORAGE.session) === '1') openAdminPanel();
