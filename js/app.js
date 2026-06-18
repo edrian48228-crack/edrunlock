@@ -209,7 +209,6 @@ function renderBrand() {
 
 function renderAll() {
   renderBrand();
-  applyCodeLock();
   renderTopbar();
   renderSocialRail();
   renderContactGrid();
@@ -800,5 +799,6 @@ $('#importFile').addEventListener('change', e => {
 /* ============ Init ============ */
 ensureAuth();
 renderAll();
+applyCodeLock();
 $('#statClients').textContent = clients.length;
 $('#year').textContent = new Date().getFullYear();

@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-<link rel="stylesheet" href="css/styles.css?v=12" />
+<link rel="stylesheet" href="css/styles.css?v=13" />
 </head>
 <body>
 
@@ -393,12 +393,6 @@
   </div>
 </div>
 
-<script src="js/app.js?v=12"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
-}
-</script>
 
 <!-- ===== FLOATING MENU (completamente independiente del header) ===== -->
 <div id="fmOverlay"></div>
@@ -420,5 +414,12 @@ if ('serviceWorker' in navigator) {
     <button id="fmAdminBtn" type="button"><i class="fa-solid fa-user-shield"></i> Admin</button>
   </div>
 </div>
+<script src="js/app.js?v=13"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+}
+</script>
+
 </body>
 </html>
