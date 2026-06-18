@@ -1,0 +1,101 @@
+{
+  "boxes": [
+    {
+      "id": "b_vxp1j7jxmqj7yzxg",
+      "name": "iRemoval PRO",
+      "price": 25,
+      "image": "images/box-sample.jpg",
+      "short": "iCloud Bypass con señal para iPhone XR a 15 Pro Max.",
+      "description": "Solución definitiva de bypass de iCloud con señal. Compatible con iPhone XR hasta iPhone 15 Pro Max. Incluye soporte y actualizaciones.",
+      "features": [
+        "Bypass iCloud con señal",
+        "iPhone XR - 15 Pro Max",
+        "Soporte 24/7",
+        "Actualizaciones gratis"
+      ],
+      "downloads": [
+        {
+          "label": "Descargar v2.3",
+          "url": "#"
+        },
+        {
+          "label": "Manual PDF",
+          "url": "#"
+        }
+      ],
+      "whatsapp": "5354975132",
+      "telegram": "https://t.me/siouxs_unlock",
+      "facebook": "",
+      "phone": "+5354975132",
+      "moreInfo": "https://iremoval.pro"
+    },
+    {
+      "id": "b_5f4pqvs9mqj7yzxg",
+      "name": "Unlock Tool",
+      "price": 18,
+      "image": "images/box-sample.jpg",
+      "short": "Herramienta multimarca para FRP, MDM y desbloqueo.",
+      "description": "Caja universal de desbloqueo para múltiples marcas Android. Soporte para FRP, MDM, patrón, PIN y más.",
+      "features": [
+        "Multi-marca Android",
+        "FRP / MDM bypass",
+        "Actualizaciones diarias"
+      ],
+      "downloads": [
+        {
+          "label": "Última versión",
+          "url": "#"
+        }
+      ],
+      "whatsapp": "5354975132",
+      "telegram": "@unlockbox",
+      "facebook": "",
+      "phone": "+5354975132",
+      "moreInfo": ""
+    }
+  ],
+  "clients": [],
+  "settings": {
+    "contacts": {
+      "phone": "+53 0000 0000",
+      "email": "contacto@unlockbox.com",
+      "schedule": "Lun - Sáb · 8AM - 5PM",
+      "address": ""
+    },
+    "payments": [
+      {
+        "id": "b_g1p08gr8mqj7yzxf",
+        "name": "CUP",
+        "details": "Transferencia móvil"
+      },
+      {
+        "id": "b_bnkga8bxmqj7yzxf",
+        "name": "MLC",
+        "details": "Tarjeta MLC"
+      },
+      {
+        "id": "b_347ar13bmqj7yzxg",
+        "name": "Zelle",
+        "details": ""
+      },
+      {
+        "id": "b_5c2v8vwnmqj7yzxg",
+        "name": "USDT",
+        "details": "TRC20 / BEP20"
+      }
+    ],
+    "social": {
+      "whatsapp": "5354975132",
+      "telegram": "https://t.me/siouxs_unlock",
+      "facebook": "",
+      "instagram": "",
+      "youtube": "",
+      "twitter": "",
+      "tiktok": "",
+      "emailLink": "mailto:contacto@unlockbox.com"
+    },
+    "siteName": "KeyUnlock Tool PRO"
+  },
+  "subs": [],
+  "exportedAt": "2026-06-18T09:49:30.299Z"
+}
