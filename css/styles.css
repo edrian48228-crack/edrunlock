@@ -575,6 +575,7 @@ input, textarea { -webkit-user-select: text !important; user-select: text !impor
   #menuBtn { display: none !important; }
 }
 @media (max-width: 860px) {
+  .nav-desktop { display: none; }
   #menuBtn { display: flex; }
 }
 

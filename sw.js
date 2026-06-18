@@ -1,4 +1,4 @@
-const CACHE = 'unlockbox-v14';
+const CACHE = 'unlockbox-v15';
 
 // Al instalar: limpiar TODO cache viejo inmediatamente
 self.addEventListener('install', e => {
