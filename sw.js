@@ -1,4 +1,4 @@
-const CACHE = 'unlockbox-v5';
+const CACHE = 'unlockbox-v6';
 const ASSETS = [
   './',
   './index.html',

@@ -265,8 +265,28 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
 
 /* ============ Mobile nav ============ */
-$('#burger').addEventListener('click', () => $('#nav').classList.toggle('open'));
-$$('#nav a').forEach(a => a.addEventListener('click', () => $('#nav').classList.remove('open')));
+(function initMobileNav(){
+  const nav = $('#nav');
+  const burger = $('#burger');
+  function setOpen(open){
+    nav.classList.toggle('open', open);
+    document.body.classList.toggle('nav-open', open);
+  }
+  function toggle(e){
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    setOpen(!nav.classList.contains('open'));
+  }
+  if (burger) {
+    burger.addEventListener('click', toggle);
+    burger.addEventListener('touchend', toggle, { passive: false });
+  }
+  $$('#nav a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('click', e => {
+    if (!nav.classList.contains('open')) return;
+    if (e.target.closest('#nav') || e.target.closest('#burger')) return;
+    setOpen(false);
+  });
+})();
 
 /* ============ Search ============ */
 $('#searchBox').addEventListener('input', e => renderBoxes(e.target.value));
