@@ -17,6 +17,14 @@ const STORAGE = {
 
 /* ============ Utils ============ */
 function cryptoId() { return 'b_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+function togglePass(btn) {
+  const inp = btn.previousElementSibling;
+  if (!inp) return;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  const ico = btn.querySelector('i');
+  if (ico) ico.className = show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+}
 function $(sel, root = document) { return root.querySelector(sel); }
 function $$(sel, root = document) { return [...root.querySelectorAll(sel)]; }
 function load(key, fallback) { try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch { return fallback; } }
@@ -114,8 +122,8 @@ async function ensureAuth() {
 function renderTopbar() {
   const c = settings.contacts;
   $('#topbarInner').innerHTML = `
-    ${c.phone ? `<span><i class="fa-solid fa-phone"></i> ${escapeHtml(c.phone)}</span>` : ''}
-    ${c.email ? `<span><i class="fa-solid fa-envelope"></i> ${escapeHtml(c.email)}</span>` : ''}
+    ${c.phone ? `<a href="tel:${encodeURIComponent(c.phone.replace(/\s/g,''))}" class="topbar-link"><i class="fa-solid fa-phone"></i> ${escapeHtml(c.phone)}</a>` : ''}
+    ${c.email ? `<a href="mailto:${encodeURIComponent(c.email)}" class="topbar-link"><i class="fa-solid fa-envelope"></i> ${escapeHtml(c.email)}</a>` : ''}
     ${c.schedule ? `<span><i class="fa-solid fa-clock"></i> ${escapeHtml(c.schedule)}</span>` : ''}
   `;
 }

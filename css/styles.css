@@ -87,6 +87,11 @@ textarea { resize: vertical; }
   padding: 8px 20px; justify-content: center;
 }
 .topbar i { color: var(--primary-2); margin-right: 6px; }
+.topbar-link {
+  color: var(--text-dim); text-decoration: none; transition: color .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.topbar-link:hover, .topbar-link:active { color: var(--primary-2); }
 
 /* ===== Header ===== */
 .header {
@@ -190,11 +195,18 @@ textarea { resize: vertical; }
 }
 .hero-content { position: relative; z-index: 2; max-width: 760px; }
 .tag {
-  display: inline-block; padding: 6px 14px; border-radius: 999px;
-  background: rgba(201,60,51,.15); border: 1px solid rgba(201,60,51,.4);
-  color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
-  text-transform: uppercase; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px;
+  color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; margin-bottom: 22px;
+  background: none; border: none; padding: 0;
 }
+.tag::before, .tag::after {
+  content: ''; flex: 1 1 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,60,51,.55), transparent);
+  max-width: 80px;
+}
+.tag::before { background: linear-gradient(90deg, transparent, rgba(201,60,51,.55)); }
+.tag::after  { background: linear-gradient(90deg, rgba(201,60,51,.55), transparent); }
 .hero h1 {
   font-family: var(--font-display); font-weight: 700;
   font-size: clamp(2rem, 5.5vw, 4rem); line-height: 1.05;
@@ -372,7 +384,20 @@ textarea { resize: vertical; }
   text-align: center; font-size: 12px; color: var(--muted);
 }
 
-/* ===== Modal ===== */
+/* ===== Password toggle ===== */
+.pass-wrap { position: relative; display: flex; }
+.pass-wrap input { padding-right: 44px; }
+.pass-toggle {
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: 42px; display: grid; place-items: center;
+  background: none; border: none; color: var(--text-dim);
+  font-size: 15px; cursor: pointer; transition: color .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pass-toggle:hover { color: var(--primary-2); }
+
+/* allow text selection / copy in inputs */
+input, textarea { -webkit-user-select: text !important; user-select: text !important; }
 .modal[hidden] { display: none !important; }
 .modal {
   position: fixed; inset: 0; z-index: 100;
@@ -475,7 +500,8 @@ textarea { resize: vertical; }
   body.nav-open { overflow: hidden; }
   body.nav-open::after {
     content: ''; position: fixed; inset: 0; z-index: 90;
-    background: rgba(0,0,0,.55); backdrop-filter: blur(2px);
+    background: rgba(0,0,0,.65);
+    /* backdrop-filter removido: causa blur/no-click en Android WebView */
   }
 }
 
