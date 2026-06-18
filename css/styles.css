@@ -96,9 +96,13 @@ textarea { resize: vertical; }
 /* ===== Header ===== */
 .header {
   position: sticky; top: 0; z-index: 80;
-  background: rgba(10,10,11,.85);
-  backdrop-filter: blur(14px);
+  background: rgba(10,10,11,.97);
+  /* backdrop-filter solo en desktop: en Android crea stacking context
+     que atrapa el nav drawer (z-index:200) haciendolo inaccesible al touch */
   border-bottom: 1px solid var(--border);
+}
+@media (min-width: 861px) {
+  .header { backdrop-filter: blur(14px); }
 }
 .header-inner { position: relative; }
 .header-inner {
@@ -144,7 +148,6 @@ textarea { resize: vertical; }
   z-index: 70;
   display: flex; flex-direction: column; gap: 10px;
   background: rgba(10,10,11,.7);
-  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   padding: 10px 8px; border-radius: 999px;
   box-shadow: var(--shadow-lg);
@@ -269,7 +272,15 @@ textarea { resize: vertical; }
 /* ===== Box cards ===== */
 .grid-cards {
   display: grid; gap: 22px;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  justify-items: center;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.grid-cards .box-card {
+  width: 100%;
+  max-width: 360px;
 }
 .box-card {
   background: var(--surface); border: 1px solid var(--border);
@@ -405,7 +416,7 @@ input, textarea { -webkit-user-select: text !important; user-select: text !impor
 }
 .modal-backdrop {
   position: absolute; inset: 0;
-  background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+  background: rgba(0,0,0,.78);
 }
 .modal-panel {
   position: relative; background: var(--surface);
@@ -480,11 +491,13 @@ input, textarea { -webkit-user-select: text !important; user-select: text !impor
     position: fixed; top: 0; right: 0;
     width: min(82vw, 320px); height: 100dvh;
     flex-direction: column; align-items: stretch; gap: 0;
-    background: var(--bg-2); border-left: 1px solid var(--border);
+    background: #111115; border-left: 1px solid var(--border);
     padding: 72px 18px 24px; display: flex;
     transform: translateX(100%); transition: transform .25s ease;
-    z-index: 95; box-shadow: -20px 0 40px rgba(0,0,0,.5);
+    z-index: 9999; box-shadow: -20px 0 40px rgba(0,0,0,.8);
     overflow-y: auto;
+    /* Sin backdrop-filter ni filter: evita stacking context en Android */
+    isolation: isolate;
   }
   .nav.open { transform: translateX(0); }
   .nav a {
@@ -496,12 +509,12 @@ input, textarea { -webkit-user-select: text !important; user-select: text !impor
   .nav a.btn-pill, .nav a.btn-admin {
     margin-top: 10px; text-align: center; border-bottom: none;
   }
-  .burger { display: inline-flex; position: relative; z-index: 100; }
+  .burger { display: inline-flex; position: relative; z-index: 9999; }
   body.nav-open { overflow: hidden; }
   body.nav-open::after {
-    content: ''; position: fixed; inset: 0; z-index: 90;
-    background: rgba(0,0,0,.65);
-    /* backdrop-filter removido: causa blur/no-click en Android WebView */
+    content: ''; position: fixed; inset: 0; z-index: 9998;
+    background: rgba(0,0,0,.7);
+    /* SIN backdrop-filter: causa blur/no-click en Android WebView */
   }
 }
 
