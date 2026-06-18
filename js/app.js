@@ -204,6 +204,7 @@ function renderBrand() {
   document.title = `${plain} - Alquiler de Cajas de Desbloqueo`;
   const prev = $('#siteNamePreview');
   if (prev) prev.innerHTML = html;
+  document.dispatchEvent(new CustomEvent('ub:brandUpdated'));
 }
 
 function renderAll() {
@@ -297,48 +298,56 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
 
-/* ============ Mobile nav (hamburger) ============ */
-(function initMobileNav(){
-  const nav    = $('#nav');
-  const burger = $('#burger');
-  const overlay = $('#navOverlay');
-  if (!nav || !burger) return;
 
-  function setOpen(open) {
-    nav.classList.toggle('open', open);
-    document.body.classList.toggle('nav-open', open);
-    burger.setAttribute('aria-expanded', String(open));
-    if (overlay) overlay.classList.toggle('visible', open);
-    const icon = burger.querySelector('i');
-    const lbl  = burger.querySelector('.burger-label');
-    if (icon) icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
-    if (lbl)  lbl.textContent = open ? 'Cerrar' : 'Menú';
+
+/* ============ Floating Menu ============ */
+(function initFloatingMenu() {
+  var btn     = document.getElementById('menuBtn');
+  var panel   = document.getElementById('fmPanel');
+  var overlay = document.getElementById('fmOverlay');
+  var closeBtn = document.getElementById('fmClose');
+  var brand   = document.getElementById('fmBrand');
+  var links   = document.querySelectorAll('[data-fm-link]');
+
+  if (!btn || !panel || !overlay) return;
+
+  // Sync brand text
+  function syncBrand() {
+    if (brand) brand.textContent = (settings.siteName || 'UNLOCKBOX').trim();
+  }
+  syncBrand();
+  // re-sync after settings load
+  document.addEventListener('ub:brandUpdated', syncBrand);
+
+  function open() {
+    panel.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
 
-  burger.addEventListener('click', function(e) {
-    e.preventDefault();
+  function close() {
+    panel.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', function(e) {
     e.stopPropagation();
-    setOpen(!nav.classList.contains('open'));
+    panel.classList.contains('open') ? close() : open();
   });
 
-  // Links del nav: primero navegar, LUEGO cerrar (pequeño delay para Android)
-  $$('#nav a').forEach(function(a) {
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', close);
+
+  // Cada link: navegar inmediatamente, cerrar panel
+  links.forEach(function(a) {
     a.addEventListener('click', function() {
-      setTimeout(function() { setOpen(false); }, 80);
+      close();
     });
   });
 
-  // Cerrar al tocar el overlay real (no pseudo-elemento)
-  if (overlay) {
-    overlay.addEventListener('click', function() { setOpen(false); });
-    overlay.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      setOpen(false);
-    }, { passive: false });
-  }
-
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && nav.classList.contains('open')) setOpen(false);
+    if (e.key === 'Escape') close();
   });
 })();
 
@@ -381,7 +390,7 @@ $('#newsletterForm').addEventListener('submit', e => {
 });
 
 /* ============ Admin auth ============ */
-$('#adminBtn').addEventListener('click', e => {
+$('#fmAdminBtn').addEventListener('click', e => {
   e.preventDefault();
   if (sessionStorage.getItem(STORAGE.session) === '1') openAdminPanel();
   else openModal('#adminLogin');
