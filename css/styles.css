@@ -1,3 +1,38 @@
+
+/* ===== Toggle switch ===== */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 14px 0; border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); margin: 4px 0;
+}
+.switch { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; inset: 0; cursor: pointer;
+  background: var(--surface-2); border-radius: 999px;
+  border: 1px solid var(--border);
+  transition: .25s;
+}
+.slider::before {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; border-radius: 50%;
+  left: 3px; bottom: 3px;
+  background: var(--text-dim);
+  transition: .25s;
+}
+.switch input:checked + .slider { background: var(--primary-2); border-color: var(--primary-2); }
+.switch input:checked + .slider::before { transform: translateX(22px); background: #fff; }
+
+/* ===== Nav overlay (reemplaza body::after para evitar bugs Android) ===== */
+#navOverlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 9990;
+  background: rgba(0,0,0,.72);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+#navOverlay.visible { display: block; }
+
 /* =====================================================
    UNLOCK BOX — PWA Stylesheet
    Font: Segoe UI (Microsoft / pro trading style)
@@ -497,7 +532,6 @@ input, textarea { -webkit-user-select: text !important; user-select: text !impor
     z-index: 9999; box-shadow: -20px 0 40px rgba(0,0,0,.8);
     overflow-y: auto;
     /* Sin backdrop-filter ni filter: evita stacking context en Android */
-    isolation: isolate;
   }
   .nav.open { transform: translateX(0); }
   .nav a {
@@ -511,11 +545,6 @@ input, textarea { -webkit-user-select: text !important; user-select: text !impor
   }
   .burger { display: inline-flex; position: relative; z-index: 9999; }
   body.nav-open { overflow: hidden; }
-  body.nav-open::after {
-    content: ''; position: fixed; inset: 0; z-index: 9998;
-    background: rgba(0,0,0,.7);
-    /* SIN backdrop-filter: causa blur/no-click en Android WebView */
-  }
 }
 
 /* ===== Mobile tightening ===== */

@@ -42,6 +42,7 @@ async function sha256(text) {
 /* ============ Defaults ============ */
 const DEFAULT_SETTINGS = {
   siteName: 'UNLOCK BOX',
+  lockCode: false,  // ofuscación de código fuente
   contacts: {
     phone: '+53 0000 0000',
     email: 'contacto@unlockbox.com',
@@ -98,6 +99,7 @@ if (!settings) { settings = DEFAULT_SETTINGS; save(STORAGE.settings, settings); 
 else {
   // merge missing keys
   if (!settings.siteName) settings.siteName = DEFAULT_SETTINGS.siteName;
+  if (settings.lockCode === undefined) settings.lockCode = false;
   settings.contacts = { ...DEFAULT_SETTINGS.contacts, ...(settings.contacts || {}) };
   settings.social = { ...DEFAULT_SETTINGS.social, ...(settings.social || {}) };
   settings.payments = settings.payments || DEFAULT_SETTINGS.payments;
@@ -206,6 +208,7 @@ function renderBrand() {
 
 function renderAll() {
   renderBrand();
+  applyCodeLock();
   renderTopbar();
   renderSocialRail();
   renderContactGrid();
@@ -296,30 +299,45 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(
 
 /* ============ Mobile nav (hamburger) ============ */
 (function initMobileNav(){
-  const nav = $('#nav');
+  const nav    = $('#nav');
   const burger = $('#burger');
+  const overlay = $('#navOverlay');
   if (!nav || !burger) return;
-  function setOpen(open){
+
+  function setOpen(open) {
     nav.classList.toggle('open', open);
     document.body.classList.toggle('nav-open', open);
-    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-expanded', String(open));
+    if (overlay) overlay.classList.toggle('visible', open);
     const icon = burger.querySelector('i');
     const lbl  = burger.querySelector('.burger-label');
     if (icon) icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
     if (lbl)  lbl.textContent = open ? 'Cerrar' : 'Menú';
   }
-  burger.addEventListener('click', (e) => {
+
+  burger.addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
     setOpen(!nav.classList.contains('open'));
   });
-  $$('#nav a').forEach(a => a.addEventListener('click', () => setOpen(false)));
-  document.addEventListener('click', e => {
-    if (!nav.classList.contains('open')) return;
-    if (e.target.closest('#nav') || e.target.closest('#burger')) return;
-    setOpen(false);
+
+  // Links del nav: primero navegar, LUEGO cerrar (pequeño delay para Android)
+  $$('#nav a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      setTimeout(function() { setOpen(false); }, 80);
+    });
   });
-  document.addEventListener('keydown', e => {
+
+  // Cerrar al tocar el overlay real (no pseudo-elemento)
+  if (overlay) {
+    overlay.addEventListener('click', function() { setOpen(false); });
+    overlay.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      setOpen(false);
+    }, { passive: false });
+  }
+
+  document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && nav.classList.contains('open')) setOpen(false);
   });
 })();
@@ -655,6 +673,37 @@ $('#exportSubsBtn').addEventListener('click', () => {
   URL.revokeObjectURL(a.href);
 });
 
+/* ============ Code Lock (ofuscación fuente) ============ */
+function applyCodeLock() {
+  // Cuando está activo: desactiva DevTools inspect en el DOM visual,
+  // bloquea click derecho, bloquea atajos de teclado de DevTools.
+  // Esto NO protege contra extracción técnica avanzada,
+  // pero disuade acceso casual / visual al código.
+  const on = !!settings.lockCode;
+  if (on) {
+    document.addEventListener('contextmenu', _blockCtx, true);
+    document.addEventListener('keydown', _blockDevKeys, true);
+    document.addEventListener('selectstart', _blockSelect, true);
+  } else {
+    document.removeEventListener('contextmenu', _blockCtx, true);
+    document.removeEventListener('keydown', _blockDevKeys, true);
+    document.removeEventListener('selectstart', _blockSelect, true);
+  }
+}
+function _blockCtx(e) { e.preventDefault(); e.stopImmediatePropagation(); return false; }
+function _blockSelect(e) {
+  // solo bloquear selección fuera de inputs/textarea
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  e.preventDefault();
+}
+function _blockDevKeys(e) {
+  // F12, Ctrl+Shift+I/J/C/U, Ctrl+U (ver código fuente)
+  if (e.key === 'F12') { e.preventDefault(); return; }
+  if (e.ctrlKey && e.shiftKey && ['i','I','j','J','c','C'].includes(e.key)) { e.preventDefault(); return; }
+  if (e.ctrlKey && ['u','U'].includes(e.key)) { e.preventDefault(); return; }
+  if (e.metaKey && e.altKey && ['i','I','j','J','c','C'].includes(e.key)) { e.preventDefault(); return; }
+}
+
 /* ============ Admin: Security ============ */
 /* ============ Admin: System (site name) ============ */
 function loadSystemForm() {
@@ -662,6 +711,9 @@ function loadSystemForm() {
   if (!inp) return;
   inp.value = settings.siteName || 'UNLOCK BOX';
   updateSystemPreview();
+  // Sync lockCode toggle
+  const tog = $('#lockCodeToggle');
+  if (tog) tog.checked = !!settings.lockCode;
 }
 function updateSystemPreview() {
   const v = ($('#siteNameInput')?.value || '').trim() || 'UNLOCK BOX';
@@ -680,9 +732,12 @@ document.addEventListener('input', e => {
     if (!v) return toast('Escribe un nombre');
     if (v.length > 40) return toast('Nombre demasiado largo');
     settings.siteName = v;
+    const lct = $('#lockCodeToggle');
+    settings.lockCode = lct ? lct.checked : false;
     save(STORAGE.settings, settings);
     renderBrand();
-    toast('Nombre del sistema actualizado');
+    applyCodeLock();
+    toast('Sistema actualizado');
   });
 })();
 
