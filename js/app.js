@@ -179,11 +179,6 @@ function renderBottomContacts() {
     ${c.email ? `<div class="bc-item"><i class="fa-solid fa-envelope"></i> <span>${escapeHtml(c.email)}</span></div>` : ''}
     ${c.schedule ? `<div class="bc-item"><i class="fa-solid fa-clock"></i> <span>${escapeHtml(c.schedule)}</span></div>` : ''}
     ${c.address ? `<div class="bc-item"><i class="fa-solid fa-location-dot"></i> <span>${escapeHtml(c.address)}</span></div>` : ''}
-    <div class="bc-signature">
-      <div class="bc-sig-line"></div>
-      <div class="bc-sig-text"><i class="fa-solid fa-crown"></i> Creado por <span>Edrian Cruz</span></div>
-      <div class="bc-sig-line"></div>
-    </div>
   `;
 }
 

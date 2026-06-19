@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-<link rel="stylesheet" href="css/styles.css?v=16" />
+<link rel="stylesheet" href="css/styles.css?v=17" />
 </head>
 <body>
 
@@ -31,6 +31,7 @@
       <i class="fa-solid fa-unlock-keyhole"></i>
       <span id="brandText">UNLOCK<strong>BOX</strong></span>
     </a>
+    <span class="header-credit">Creado por <span>Edrian Cruz</span></span>
     <!-- Nav desktop (visible solo en pantallas grandes) -->
     <nav class="nav-desktop">
       <a href="#inicio">Inicio</a>
@@ -176,8 +177,7 @@
     <div class="copy-divider">
       <i class="fa-solid fa-crown copy-crown"></i>
     </div>
-    <div>© <span id="year"></span> UnlockBox. Todos los derechos reservados.</div>
-    <div class="copy-author">Creado por <span>Edrian Cruz</span></div>
+    <div class="copy-author">© <span id="year"></span> <span>UnlockBox</span> · Todos los derechos reservados</div>
   </div>
 </footer>
 
@@ -429,7 +429,7 @@
     <button id="fmAdminBtn" type="button"><i class="fa-solid fa-user-shield"></i> Admin</button>
   </div>
 </div>
-<script src="js/app.js?v=16"></script>
+<script src="js/app.js?v=17"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
